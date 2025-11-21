@@ -82,7 +82,7 @@ class _ChatScreenState extends State<ChatScreen> {
             right: -2,
             bottom: -2,
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
@@ -127,7 +127,12 @@ class _ChatScreenState extends State<ChatScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: bg,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.only(
+                      topLeft: isMe ? const Radius.circular(12) : Radius.zero,
+                      topRight: isMe ? Radius.zero : const Radius.circular(12),
+                      bottomLeft: const Radius.circular(12),
+                      bottomRight: const Radius.circular(12),
+                    ),
                   ),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -158,9 +163,17 @@ class _ChatScreenState extends State<ChatScreen> {
         title: const Text('Chat'),
         backgroundColor: const Color(0xFF00589e),
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFE8F1FA), Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
             // user selector
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
