@@ -88,6 +88,5 @@ flutter:
     - assets/images/
     - assets/icons/
 
-  # Additional packages used by the app
-dependencies_overrides:
+# Additional packages used by the app
   path_provider: ^2.0.0
