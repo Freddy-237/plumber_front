@@ -56,6 +56,54 @@ class _ChatScreenState extends State<ChatScreen> {
     final align = isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     final bg = isMe ? Colors.blue[700] : Colors.grey[200];
     final textColor = isMe ? Colors.white : Colors.black87;
+    // find author's role (may be null)
+    final author =
+        _users.firstWhere((u) => u['id'] == msg.userId, orElse: () => {});
+    final authorRole = author['role'];
+
+    Widget avatarFor(String name, bool me, String? role) {
+      final baseAvatar = CircleAvatar(
+        backgroundColor: me ? Colors.blue[700] : Colors.grey[300],
+        child: Text(
+          name.isNotEmpty ? name[0] : '?',
+          style: TextStyle(color: me ? Colors.white : Colors.black87),
+        ),
+      );
+
+      final isPlumber = role == 'plumber';
+
+      if (!isPlumber) return baseAvatar;
+
+      return Stack(
+        clipBehavior: Clip.none,
+        children: [
+          baseAvatar,
+          Positioned(
+            right: -2,
+            bottom: -2,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              padding: const EdgeInsets.all(1.5),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.green[700],
+                  shape: BoxShape.circle,
+                ),
+                padding: const EdgeInsets.all(3),
+                child: const Icon(
+                  Icons.build,
+                  size: 12,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -64,10 +112,7 @@ class _ChatScreenState extends State<ChatScreen> {
         mainAxisAlignment:
             isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if (!isMe)
-            CircleAvatar(
-              child: Text(msg.userName.isNotEmpty ? msg.userName[0] : '?'),
-            ),
+          if (!isMe) avatarFor(msg.userName, false, authorRole),
           const SizedBox(width: 8),
           Flexible(
             child: Column(
@@ -100,14 +145,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           if (isMe) const SizedBox(width: 8),
-          if (isMe)
-            CircleAvatar(
-              backgroundColor: Colors.blue[700],
-              child: Text(
-                msg.userName.isNotEmpty ? msg.userName[0] : '?',
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
+          if (isMe) avatarFor(msg.userName, true, authorRole),
         ],
       ),
     );

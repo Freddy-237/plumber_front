@@ -2,9 +2,9 @@ import '../models/message_model.dart';
 
 // Liste d'utilisateurs (id, name, avatar)
 final List<Map<String, String?>> sampleUsers = [
-  {'id': 'u1', 'name': 'Alice', 'avatar': null},
-  {'id': 'u2', 'name': 'Bob', 'avatar': null},
-  {'id': 'u3', 'name': 'Sam', 'avatar': null},
+  {'id': 'u1', 'name': 'Alice', 'avatar': null, 'role': 'client'},
+  {'id': 'u2', 'name': 'Bob', 'avatar': null, 'role': 'plumber'},
+  {'id': 'u3', 'name': 'Sam', 'avatar': null, 'role': 'plumber'},
 ];
 
 // Messages d'exemple
