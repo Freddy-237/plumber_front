@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:plumber/widgets/login_template.dart';
+import '/widgets/login_template.dart';
 
 import 'plumber_register_screen.dart';
 import 'chat_screen.dart';
@@ -16,6 +16,14 @@ class PlumberLoginScreen extends ConsumerStatefulWidget {
 class _PlumberLoginScreenState extends ConsumerState<PlumberLoginScreen> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Valeurs prédéfinies pour tests — changez si nécessaire
+    _phoneController.text = '0700000000';
+    _passwordController.text = '123456';
+  }
 
   @override
   void dispose() {
