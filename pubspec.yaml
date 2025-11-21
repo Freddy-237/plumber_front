@@ -70,6 +70,9 @@ dependencies:
   # Form validation
   flutter_form_builder: ^9.1.0
 
+  # Additional packages used by the app
+  path_provider: ^2.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -89,4 +92,3 @@ flutter:
     - assets/icons/
 
 # Additional packages used by the app
-  path_provider: ^2.0.0
