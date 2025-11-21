@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/message_model.dart';
-import '../services/export_service.dart';
+import '../data/sample_data.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -13,46 +13,20 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
 
-  // Simulated users
-  final List<Map<String, String?>> _users = [
-    {'id': 'u1', 'name': 'Alice', 'avatar': null},
-    {'id': 'u2', 'name': 'Bob', 'avatar': null},
-    {'id': 'u3', 'name': 'Sam', 'avatar': null},
-  ];
+  // Users and messages loaded from sample data file
+  late List<Map<String, String?>> _users;
 
   late String _currentUserId;
 
-  final List<Message> _messages = [];
+  late List<Message> _messages;
 
   @override
   void initState() {
     super.initState();
+    // initialize from sample data (create mutable copies)
+    _users = sampleUsers.map((u) => Map<String, String?>.from(u)).toList();
+    _messages = sampleMessages.map((m) => m).toList();
     _currentUserId = _users.first['id']!;
-
-    // sample messages
-    _messages.addAll([
-      Message(
-        id: 'm1',
-        userId: 'u2',
-        userName: 'Bob',
-        text: 'Salut, quelqu\'un peut m\'aider ?',
-        time: DateTime.now().subtract(const Duration(minutes: 12)),
-      ),
-      Message(
-        id: 'm2',
-        userId: 'u1',
-        userName: 'Alice',
-        text: 'Je suis dispo, quel est le problème ?',
-        time: DateTime.now().subtract(const Duration(minutes: 10)),
-      ),
-      Message(
-        id: 'm3',
-        userId: 'u3',
-        userName: 'Sam',
-        text: 'Je peux aussi regarder.',
-        time: DateTime.now().subtract(const Duration(minutes: 4)),
-      ),
-    ]);
   }
 
   void _sendMessage() {
@@ -144,13 +118,6 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat'),
-        actions: [
-          IconButton(
-            tooltip: 'Exporter utilisateurs & messages',
-            icon: const Icon(Icons.download),
-            onPressed: _exportData,
-          ),
-        ],
         backgroundColor: const Color(0xFF00589e),
       ),
       body: SafeArea(
@@ -228,35 +195,5 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> _exportData() async {
-    try {
-      final result = await ExportService.exportUsersAndMessages(
-        users: _users,
-        messages: _messages,
-      );
-
-      if (!mounted) return;
-
-      final usersPath = result['users'];
-      final messagesPath = result['messages'];
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content:
-              Text('Exporté: users -> $usersPath\nmessages -> $messagesPath'),
-          duration: const Duration(seconds: 6),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erreur d\'export: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
   }
 }
