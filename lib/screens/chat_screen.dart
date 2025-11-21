@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/message_model.dart';
+import '../services/export_service.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -86,7 +87,8 @@ class _ChatScreenState extends State<ChatScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           if (!isMe)
             CircleAvatar(
@@ -99,7 +101,8 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Text(
                   msg.userName,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4),
                 Container(
@@ -107,7 +110,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     color: bg,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   child: Text(
                     msg.text,
                     style: TextStyle(color: textColor),
@@ -140,6 +144,13 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat'),
+        actions: [
+          IconButton(
+            tooltip: 'Exporter utilisateurs & messages',
+            icon: const Icon(Icons.download),
+            onPressed: _exportData,
+          ),
+        ],
         backgroundColor: const Color(0xFF00589e),
       ),
       body: SafeArea(
@@ -205,7 +216,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     onPressed: _sendMessage,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00589e),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
                     ),
                     child: const Icon(Icons.send),
                   ),
@@ -216,5 +228,35 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _exportData() async {
+    try {
+      final result = await ExportService.exportUsersAndMessages(
+        users: _users,
+        messages: _messages,
+      );
+
+      if (!mounted) return;
+
+      final usersPath = result['users'];
+      final messagesPath = result['messages'];
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('Exporté: users -> $usersPath\nmessages -> $messagesPath'),
+          duration: const Duration(seconds: 6),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur d\'export: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
